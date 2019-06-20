@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,5 +28,10 @@ public class LivroResource {
 	@PostMapping
 	public void salvar(@RequestBody Livro livro) {
 		livroRepository.save(livro);
+	}
+	
+	@GetMapping("/{id}")
+	public Livro buscar(@PathVariable("id") Long id) {
+		return livroRepository.findOne(id);
 	}
 }
