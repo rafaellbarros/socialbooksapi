@@ -42,7 +42,4 @@ public class Livro {
 	@JsonInclude(Include.NON_NULL)
 	private String autor;
 	
-	public Livro(String nome) {
-		this.nome = nome;
-	}
 }
