@@ -2,10 +2,9 @@ package com.algaworks.socialbooks.api.resource;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,8 +28,8 @@ public class LivroResource {
 	private LivroRepository livroRepository;
 
 	@GetMapping
-	public List<Livro> listar() {
-		return livroRepository.findAll();
+	public ResponseEntity<List<Livro>> listar() {
+		return ResponseEntity.status(HttpStatus.OK).body(livroRepository.findAll());
 	}
 	
 	@PostMapping
@@ -54,13 +53,22 @@ public class LivroResource {
 	}
 	
 	@DeleteMapping("/{id}")
-	public void deletar(@PathVariable("id") Long id) {
-		livroRepository.delete(id);
+	public ResponseEntity<Void> deletar(@PathVariable("id") Long id) {
+		
+		try {
+			livroRepository.delete(id);			
+		} catch (EmptyResultDataAccessException e) {
+			return ResponseEntity.notFound().build();
+		}
+		
+		return ResponseEntity.noContent().build();
 	}
 	
 	@PutMapping("/{id}")
-	public void atualizar(@PathVariable("id") Long id, @RequestBody Livro livro) {
+	public ResponseEntity<Void> atualizar(@PathVariable("id") Long id, 
+			@RequestBody Livro livro) {
 		livro.setId(id);
 		livroRepository.save(livro);
+		return ResponseEntity.noContent().build();
 	}
 }
