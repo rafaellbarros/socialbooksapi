@@ -18,12 +18,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.algaworks.socialbooks.api.domain.Livro;
 import com.algaworks.socialbooks.api.service.LivroService;
-import com.algaworks.socialbooks.api.service.exception.LivroNaoEncontradoException;
 
 @RestController
 @RequestMapping("/livros")
 public class LivroResource {
-	
+
 	@Autowired
 	private LivroService livroService;
 
@@ -31,48 +30,32 @@ public class LivroResource {
 	public ResponseEntity<List<Livro>> listar() {
 		return ResponseEntity.status(HttpStatus.OK).body(livroService.listar());
 	}
-	
+
 	@PostMapping
 	public ResponseEntity<Void> salvar(@RequestBody Livro livro) {
 		livro = livroService.salvar(livro);
-		
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-			.path("/{id}").buildAndExpand(livro.getId()).toUri();
+
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(livro.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
-	
+
 	@GetMapping("/{id}")
 	public ResponseEntity<?> buscar(@PathVariable("id") Long id) {
-		Livro livro = null;
-		try {
-			livro = livroService.buscar(id);
-		} catch (LivroNaoEncontradoException e) {
-			return ResponseEntity.notFound().build();
-		}
+		Livro livro = livroService.buscar(id);
 		return ResponseEntity.status(HttpStatus.OK).body(livro);
 	}
-	
+
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deletar(@PathVariable("id") Long id) {
-		
-		try {
-			livroService.deletar(id);			
-		} catch (LivroNaoEncontradoException e) {
-			return ResponseEntity.notFound().build();
-		}
-		
+		livroService.deletar(id);
 		return ResponseEntity.noContent().build();
 	}
-	
+
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> atualizar(@PathVariable("id") Long id, 
-			@RequestBody Livro livro) {
+	public ResponseEntity<Void> atualizar(@PathVariable("id") Long id, @RequestBody Livro livro) {
 		livro.setId(id);
-		try {
-			livroService.atualizar(livro);			
-		} catch (LivroNaoEncontradoException e) {
-			return ResponseEntity.notFound().build();
-		}
+
+		livroService.atualizar(livro);
 
 		return ResponseEntity.noContent().build();
 	}
