@@ -1,12 +1,15 @@
 package com.algaworks.socialbooks.api.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.algaworks.socialbooks.api.domain.Comentario;
 import com.algaworks.socialbooks.api.domain.Livro;
+import com.algaworks.socialbooks.api.repository.ComentarioRepository;
 import com.algaworks.socialbooks.api.repository.LivroRepository;
 import com.algaworks.socialbooks.api.service.exception.LivroNaoEncontradoException;
 
@@ -15,6 +18,9 @@ public class LivroService {
 	
 	@Autowired
 	private LivroRepository livroRepository;
+	
+	@Autowired
+	private ComentarioRepository comentarioRepository;
 	
 	public List<Livro> listar() {
 		return livroRepository.findAll();
@@ -46,6 +52,13 @@ public class LivroService {
 	public void atualizar(Livro livro) {
 		verificarExistencia(livro);
 		livroRepository.save(livro);
+	}
+	
+	public Comentario salvarComentario(Long livroId, Comentario comentario) {
+		Livro livro = buscar(livroId);
+		comentario.setLivro(livro);
+		comentario.setData(LocalDate.now());
+		return comentarioRepository.save(comentario);
 	}
 	
 	private void verificarExistencia(Livro livro) {
