@@ -62,10 +62,16 @@ public class LivroResource {
 	}
 	
 	@PostMapping("/{id}/comentarios")
-	public ResponseEntity<Void> adicionarComentario(@PathVariable("id")Long livroId, @RequestBody Comentario comentario) {
+	public ResponseEntity<Void> adicionarComentario(@PathVariable("id") Long livroId, @RequestBody Comentario comentario) {
 		livroService.salvarComentario(livroId, comentario);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
 		
 		return ResponseEntity.created(uri).build();
+	}
+	
+	@GetMapping("/{id}/comentarios")
+	public ResponseEntity<List<Comentario>> listarComentarios(@PathVariable("id")Long livroId) {
+		List<Comentario> comentarios = livroService.listarComentarios(livroId);
+		return ResponseEntity.status(HttpStatus.OK).body(comentarios);
 	}
 }
