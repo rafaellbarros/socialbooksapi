@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.algaworks.socialbooks.api.service.exception.AutorExistenteException;
+import com.algaworks.socialbooks.api.service.exception.AutorNaoEncontradoException;
 import com.algaworks.socialbooks.api.service.exception.LivroNaoEncontradoException;
 
 import lombok.AllArgsConstructor;
@@ -26,6 +28,31 @@ public class ResourceExceptionHandler {
 						
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
 	}
+	
+	@ExceptionHandler(AutorExistenteException.class)
+	public ResponseEntity<Erro> handleAutorExistenteException
+			(AutorExistenteException ex, HttpServletRequest request) {
+	
+		String mensagemUsuario = ex.getMessage();
+		String mensagemDesenvolvedor = ex.toString();
+
+		Erro erro = new Erro(mensagemUsuario, mensagemDesenvolvedor, 409l);
+						
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
+	}
+	
+	@ExceptionHandler(AutorNaoEncontradoException.class)
+	public ResponseEntity<Erro> handleAutorNaoEncontradoException
+			(AutorNaoEncontradoException ex, HttpServletRequest request) {
+	
+		String mensagemUsuario = ex.getMessage();
+		String mensagemDesenvolvedor = ex.toString();
+
+		Erro erro = new Erro(mensagemUsuario, mensagemDesenvolvedor, 404l);
+						
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
+	}
+	
 	
 	@Getter
 	@AllArgsConstructor
