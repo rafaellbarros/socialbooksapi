@@ -2,6 +2,7 @@ package com.algaworks.socialbooks.api.handler;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -52,6 +53,18 @@ public class ResourceExceptionHandler {
 						
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
 	}
+	
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<Erro> handleADataIntegrityViolationException
+			(DataIntegrityViolationException ex, HttpServletRequest request) {
+	
+		String mensagemUsuario = String.format("Requisição inválida");
+		String mensagemDesenvolvedor = ex.toString();
+
+		Erro erro = new Erro(mensagemUsuario, mensagemDesenvolvedor, 400l);
+						
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+	}	
 	
 	
 	@Getter
