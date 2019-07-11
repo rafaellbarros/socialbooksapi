@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,7 +71,13 @@ public class LivroResource {
 	
 	@PostMapping("/{id}/comentarios")
 	public ResponseEntity<Void> adicionarComentario(@PathVariable("id") Long livroId, @RequestBody Comentario comentario) {
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		
+		comentario.setUsuario(auth.getName());
+		
 		livroService.salvarComentario(livroId, comentario);
+
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
 		
 		return ResponseEntity.created(uri).build();
